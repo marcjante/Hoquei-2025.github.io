@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Porterías - Hockey Patines</title>
+    <meta name="description" content="Sistema profesional de seguimiento de porterías para hockey patines">
+    <style>
+        /* Porterías Hockey Patines - CSS Completo */
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #dc2626;
+            --accent: #059669;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --goal-blue: #3b82f6;
+            --goal-red: #ef4444;
+            --goal-yellow: #f59e0b;
+            --border-radius: 15px;
+            --shadow: 0 20px 40px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+
+        .container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .university-badge {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            font-weight: 500;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .match-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .match-timer {
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        /* Goals Section Layout */
+        .goals-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            padding: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .goals-section {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 1rem;
+            }
+        }
+
+        /* Goal Container */
+        .goal-container {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--light);
+            border-radius: 10px;
+            border: 3px solid #e2e8f0;
+            transition: var(--transition);
+        }
+
+        .goal-container:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .goal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            padding: 0.5rem;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Goal Frame and Grid */
+        .goal-frame {
+            width: 300px;
+            height: 180px;
+            border: 6px solid #000;
+            position: relative;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #4b5563, #6b7280);
+            cursor: crosshair;
+            border-radius: 5px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            transition: var(--transition);
+        }
+
+        .goal-frame:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.4);
+        }
+
+        .goal-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 2px;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .goal-cell {
+            border: 2px solid rgba(255,255,255,0.4);
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .goal-cell:hover {
+            background: rgba(255,255,255,0.1);
+            transform: scale(0.95);
+        }
+
+        /* Shot Markers */
+        .shot-marker {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+            z-index: 10;
+            animation: appear 0.3s ease-out;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .shot-marker:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+            z-index: 20;
+        }
+
+        @keyframes appear {
+            from {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .shot-marker.goal {
+            background: var(--goal-blue);
+        }
+
+        .shot-marker.save {
+            background: var(--goal-red);
+        }
+
+        .shot-marker.miss {
+            background: var(--goal-yellow);
+        }
+
+        /* Shot Controls */
+        .shot-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .shot-type-btn {
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: var(--transition);
+            border: 3px solid transparent;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .shot-type-btn.active {
+            border-color: white;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .shot-type-btn.goal {
+            background: var(--goal-blue);
+            color: white;
+        }
+
+        .shot-type-btn.save {
+            background: var(--goal-red);
+            color: white;
+        }
+
+        .shot-type-btn.miss {
+            background: var(--goal-yellow);
+            color: white;
+        }
+
+        .shot-type-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Player Input */
+        .player-input {
+            margin: 1rem 0;
+        }
+
+        .player-input input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            text-align: center;
+            font-weight: bold;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .player-input input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Goal Statistics */
+        .goal-stats {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            transition: var(--transition);
+        }
+
+        .goal-stats:hover {
+            border-color: var(--primary);
+        }
+
+        .goal-stats h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-card {
+            background: var(--light);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #cbd5e1;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .effectiveness {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, var(--primary), #3730a3);
+            color: white;
+            border: none;
+        }
+
+        .effectiveness .stat-value {
+            color: white;
+        }
+
+        .effectiveness:hover {
+            background: linear-gradient(135deg, #3730a3, var(--primary));
+        }
+
+        /* Recent Shots */
+        .recent-shots {
+            margin-top: 1rem;
+            max-height: 120px;
+            overflow-y: auto;
+            background: white;
+            border-radius: 8px;
+            padding: 0.5rem;
+            border: 2px solid #e2e8f0;
+            transition: var(--transition);
+        }
+
+        .recent-shots:hover {
+            border-color: var(--primary);
+        }
+
+        .recent-shots::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .recent-shots::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+
+        .recent-shots::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        .recent-shots::-webkit-scrollbar-thumb:hover {
+            background: #1e40af;
+        }
+
+        .shot-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .shot-item:hover {
+            background: #f8fafc;
+            transform: translateX(5px);
+        }
+
+        .shot-item:last-child {
+            border-bottom: none;
+        }
+
+        .shot-type-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        /* Actions Section */
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding: 0 2rem 2rem;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 480px) {
+            .actions {
+                flex-direction: column;
+            }
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            flex: 1;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 150px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--goal-red);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            opacity: 0.9;
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        footer p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            color: white;
+            border-radius: 8px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            font-weight: 500;
+        }
+
+        .notification-success {
+            background: var(--accent);
+        }
+
+        .notification-error {
+            background: var(--goal-red);
+        }
+
+        .notification-warning {
+            background: var(--goal-yellow);
+        }
+
+        .notification-info {
+            background: var(--goal-blue);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Instructions */
+        .instructions {
+            background: #fef3c7;
+            border-left: 4px solid var(--goal-yellow);
+            padding: 1rem;
+            margin: 1rem 2rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .instructions h3 {
+            color: #92400e;
+            margin-bottom: 0.5rem;
+        }
+
+        .instructions ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .instructions li {
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .instructions li::before {
+            content: "•";
+            color: var(--goal-yellow);
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="university-badge">UNIVERSITY OF L.C.</div>
+            <h1>Sistema de Porterías - Hockey Patines</h1>
+            <p class="subtitle">Seguimiento profesional de disparos y estadísticas de porteros</p>
+            <div class="match-info">
+                <div class="match-timer">Tiempo: <span id="matchTimer">00:00:00</span></div>
+                <div class="match-date" id="matchDate"></div>
+            </div>
+        </header>
+
+        <div class="instructions">
+            <h3>Instrucciones de Uso</h3>
+            <ul>
+                <li>Selecciona el tipo de disparo (Gol/Parada/Fuera)</li>
+                <li>Introduce el número del jugador que dispara</li>
+                <li>Haz clic en la portería donde fue el disparo</li>
+                <li>Haz clic derecho en cualquier marcador para eliminarlo</li>
+                <li>Las estadísticas se actualizan automáticamente</li>
+            </ul>
+        </div>
+
+        <div class="goals-section">
+            <!-- Portería Local -->
+            <div class="goal-container">
+                <div class="goal-title" id="localGoalTitle">Portería Local</div>
+                
+                <div class="goal-frame" id="localGoal">
+                    <div class="goal-grid">
+                        <div class="goal-cell" data-zone="1"></div>
+                        <div class="goal-cell" data-zone="2"></div>
+                        <div class="goal-cell" data-zone="3"></div>
+                        <div class="goal-cell" data-zone="4"></div>
+                        <div class="goal-cell" data-zone="5"></div>
+                        <div class="goal-cell" data-zone="6"></div>
+                        <div class="goal-cell" data-zone="7"></div>
+                        <div class="goal-cell" data-zone="8"></div>
+                        <div class="goal-cell" data-zone="9"></div>
+                    </div>
+                </div>
+
+                <div class="shot-controls">
+                    <button class="shot-type-btn goal active" onclick="setShotType('goal')">
+                        Gol<br>Azul
+                    </button>
+                    <button class="shot-type-btn save" onclick="setShotType('save')">
+                        Parada<br>Rojo
+                    </button>
+                    <button class="shot-type-btn miss" onclick="setShotType('miss')">
+                        Fuera<br>Amarillo
+                    </button>
+                </div>
+
+                <div class="player-input">
+                    <input type="number" id="localShooterNumber" min="1" max="99" placeholder="Nº Jugador que dispara" onkeypress="handleEnterKey(event, 'localShooterNumber')">
+                </div>
+
+                <div class="goal-stats">
+                    <h3>Estadísticas del Portero</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="localGoalsAgainst">0</div>
+                            <div class="stat-label">Goles Recibidos</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="localSaves">0</div>
+                            <div class="stat-label">Paradas</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="localMisses">0</div>
+                            <div class="stat-label">Disparos Fuera</div>
+                        </div>
+                        <div class="stat-card effectiveness">
+                            <div class="stat-value" id="localEffectiveness">0%</div>
+                            <div class="stat-label">Efectividad</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-shots" id="localRecentShots">
+                    <div class="shot-item">
+                        <span>Haz clic en la portería para registrar disparos</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portería Visitante -->
+            <div class="goal-container">
+                <div class="goal-title" id="visitorGoalTitle">Portería Visitante</div>
+                
+                <div class="goal-frame" id="visitorGoal">
+                    <div class="goal-grid">
+                        <div class="goal-cell" data-zone="1"></div>
+                        <div class="goal-cell" data-zone="2"></div>
+                        <div class="goal-cell" data-zone="3"></div>
+                        <div class="goal-cell" data-zone="4"></div>
+                        <div class="goal-cell" data-zone="5"></div>
+                        <div class="goal-cell" data-zone="6"></div>
+                        <div class="goal-cell" data-zone="7"></div>
+                        <div class="goal-cell" data-zone="8"></div>
+                        <div class="goal-cell" data-zone="9"></div>
+                    </div>
+                </div>
+
+                <div class="shot-controls">
+                    <button class="shot-type-btn goal active" onclick="setShotType('goal')">
+                        Gol<br>Azul
+                    </button>
+                    <button class="shot-type-btn save" onclick="setShotType('save')">
+                        Parada<br>Rojo
+                    </button>
+                    <button class="shot-type-btn miss" onclick="setShotType('miss')">
+                        Fuera<br>Amarillo
+                    </button>
+                </div>
+
+                <div class="player-input">
+                    <input type="number" id="visitorShooterNumber" min="1" max="99" placeholder="Nº Jugador que dispara" onkeypress="handleEnterKey(event, 'visitorShooterNumber')">
+                </div>
+
+                <div class="goal-stats">
+                    <h3>Estadísticas del Portero</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="visitorGoalsAgainst">0</div>
+                            <div class="stat-label">Goles Recibidos</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="visitorSaves">0</div>
+                            <div class="stat-label">Paradas</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="visitorMisses">0</div>
+                            <div class="stat-label">Disparos Fuera</div>
+                        </div>
+                        <div class="stat-card effectiveness">
+                            <div class="stat-value" id="visitorEffectiveness">0%</div>
+                            <div class="stat-label">Efectividad</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-shots" id="visitorRecentShots">
+                    <div class="shot-item">
+                        <span>Haz clic en la portería para registrar disparos</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary" onclick="generateReport()">Generar Informe</button>
+            <button class="btn btn-success" onclick="resetMatch()">Nuevo Partido</button>
+            <button class="btn btn-danger" onclick="clearShots()">Limpiar Disparos</button>
+            <button class="btn btn-primary" onclick="exportData()">Exportar Datos</button>
+        </div>
+
+        <footer>
+            <p>Sistema de Porterías - Hockey Patines - UNIVERSITY OF L.C. &copy; 2023</p>
+        </footer>
+    </div>
+
+    <script>
+        // Porterías Hockey Patines - Sistema de Gestión Completo
+        class HockeyGoalTracker {
+            constructor() {
+                this.currentShotType = 'goal';
+                this.shotsData = {
+                    local: { goals: 0, saves: 0, misses: 0, shots: [] },
+                    visitor: { goals: 0, saves: 0, misses: 0, shots: [] }
+                };
+                this.matchData = {
+                    startTime: null,
+                    endTime: null,
+                    location: '',
+                    teams: {
+                        local: { name: 'Equipo Local', color: '#1e3a8a' },
+                        visitor: { name: 'Equipo Visitante', color: '#7c3aed' }
+                    }
+                };
+                this.init();
+            }
+
+            init() {
+                this.initializeGoals();
+                this.setupEventListeners();
+                this.loadFromStorage();
+                this.matchData.startTime = new Date();
+                this.updateMatchTimer();
+                this.updateMatchDate();
+            }
+
+            initializeGoals() {
+                const goals = ['localGoal', 'visitorGoal'];
+                
+                goals.forEach(goalId => {
+                    const goalElement = document.getElementById(goalId);
+                    if (!goalElement) return;
+
+                    goalElement.addEventListener('click', (e) => {
+                        this.handleGoalClick(goalId, e);
+                    });
+
+                    goalElement.addEventListener('contextmenu', (e) => {
+                        e.preventDefault(); // Prevent context menu
+                    });
+                });
+            }
+
+            setupEventListeners() {
+                // Auto-guardado cada 30 segundos
+                setInterval(() => this.saveToStorage(), 30000);
+
+                // Prevenir pérdida de datos
+                window.addEventListener('beforeunload', (e) => {
+                    if (this.shotsData.local.shots.length > 0 || this.shotsData.visitor.shots.length > 0) {
+                        e.preventDefault();
+                        e.returnValue = '';
+                    }
+                });
+            }
+
+            handleGoalClick(goalId, event) {
+                const rect = event.currentTarget.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                
+                const team = goalId.includes('local') ? 'local' : 'visitor';
+                const shooterNumber = this.getShooterNumber(team);
+                
+                this.registerShot(team, x, y, this.currentShotType, shooterNumber);
+            }
+
+            setShotType(type) {
+                this.currentShotType = type;
+                this.updateActiveButton();
+                
+                this.showNotification(`Tipo de disparo: ${this.getShotTypeName(type)}`, 'info');
+            }
+
+            updateActiveButton() {
+                document.querySelectorAll('.shot-type-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                const activeBtn = document.querySelector(`.shot-type-btn.${this.currentShotType}`);
+                if (activeBtn) {
+                    activeBtn.classList.add('active');
+                }
+            }
+
+            getShooterNumber(team) {
+                const input = document.getElementById(`${team}ShooterNumber`);
+                return input?.value || '?';
+            }
+
+            registerShot(team, x, y, type, shooterNumber) {
+                if (!shooterNumber || shooterNumber === '?') {
+                    this.showNotification('Introduce el número del jugador', 'warning');
+                    return;
+                }
+
+                const goalElement = document.getElementById(`${team}Goal`);
+                const marker = this.createShotMarker(x, y, type, shooterNumber);
+                goalElement.appendChild(marker);
+
+                this.updateShotStats(team, type);
+
+                const shotData = {
+                    id: this.generateId(),
+                    x: x,
+                    y: y,
+                    type: type,
+                    shooter: shooterNumber,
+                    timestamp: new Date(),
+                    team: team
+                };
+                
+                this.shotsData[team].shots.push(shotData);
+                this.updateRecentShots(team, shotData);
+                this.clearShooterInput(team);
+
+                this.showNotification(
+                    `${this.matchData.teams[team].name}: ${this.getShotTypeName(type)} - Jugador ${shooterNumber}`,
+                    'success'
+                );
+            }
+
+            createShotMarker(x, y, type, shooterNumber) {
+                const marker = document.createElement('div');
+                marker.className = `shot-marker ${type}`;
+                marker.style.left = `${x}px`;
+                marker.style.top = `${y}px`;
+                marker.textContent = shooterNumber;
+                marker.title = `Jugador ${shooterNumber} - ${this.getShotTypeName(type)} (Clic derecho para eliminar)`;
+                
+                marker.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    this.removeShot(marker, type, shooterNumber);
+                });
+
+                return marker;
+            }
+
+            removeShot(marker, type, shooterNumber) {
+                if (confirm(`¿Eliminar disparo del jugador ${shooterNumber}?`)) {
+                    const team = this.findShotTeam(marker);
+                    if (team) {
+                        this.shotsData[team].shots = this.shotsData[team].shots.filter(
+                            shot => !(shot.x === parseInt(marker.style.left) && shot.y === parseInt(marker.style.top))
+                        );
+                        this.revertShotStats(team, type);
+                    }
+                    
+                    marker.remove();
+                    this.showNotification('Disparo eliminado', 'info');
+                }
+            }
+
+            findShotTeam(marker) {
+                const goal = marker.closest('.goal-frame');
+                return goal.id.includes('local') ? 'local' : 'visitor';
+            }
+
+            revertShotStats(team, type) {
+                switch(type) {
+                    case 'goal':
+                        this.shotsData[team].goals = Math.max(0, this.shotsData[team].goals - 1);
+                        break;
+                    case 'save':
+                        this.shotsData[team].saves = Math.max(0, this.shotsData[team].saves - 1);
+                        break;
+                    case 'miss':
+                        this.shotsData[team].misses = Math.max(0, this.shotsData[team].misses - 1);
+                        break;
+                }
+                this.updateStatsDisplay(team);
+            }
+
+            updateShotStats(team, type) {
+                switch(type) {
+                    case 'goal':
+                        this.shotsData[team].goals++;
+                        break;
+                    case 'save':
+                        this.shotsData[team].saves++;
+                        break;
+                    case 'miss':
+                        this.shotsData[team].misses++;
+                        break;
+                }
+                this.updateStatsDisplay(team);
+            }
+
+            updateStatsDisplay(team) {
+                const stats = this.shotsData[team];
+                document.getElementById(`${team}GoalsAgainst`).textContent = stats.goals;
+                document.getElementById(`${team}Saves`).textContent = stats.saves;
+                document.getElementById(`${team}Misses`).textContent = stats.misses;
+
+                const effectiveness = this.calculateEffectiveness(team);
+                document.getElementById(`${team}Effectiveness`).textContent = `${effectiveness}%`;
+            }
+
+            calculateEffectiveness(team) {
+                const data = this.shotsData[team];
+                const totalShots = data.goals + data.saves + data.misses;
+                return totalShots > 0 ? Math.round((data.saves / totalShots) * 100) : 0;
+            }
+
+            updateRecentShots(team, shotData) {
+                const recentShotsElement = document.getElementById(`${team}RecentShots`);
+                const shotItem = this.createShotItem(shotData);
+                
+                if (recentShotsElement.firstChild?.className === 'shot-item') {
+                    recentShotsElement.insertBefore(shotItem, recentShotsElement.firstChild);
+                } else {
+                    recentShotsElement.appendChild(shotItem);
+                }
+                
+                while (recentShotsElement.children.length > 5) {
+                    recentShotsElement.removeChild(recentShotsElement.lastChild);
+                }
+            }
+
+            createShotItem(shotData) {
+                const shotItem = document.createElement('div');
+                shotItem.className = 'shot-item';
+                
+                const typeIndicator = document.createElement('span');
+                typeIndicator.className = `shot-type-indicator ${shotData.type}`;
+                typeIndicator.style.background = this.getShotColor(shotData.type);
+                
+                const time = shotData.timestamp.toLocaleTimeString([], { 
+                    hour: '2-digit', 
+                    minute: '2-digit'
+                });
+                
+                shotItem.innerHTML = `
+                    ${typeIndicator.outerHTML}
+                    <span>Jugador ${shotData.shooter}</span>
+                    <span>${this.getShotTypeName(shotData.type)}</span>
+                    <span>${time}</span>
+                `;
+
+                return shotItem;
+            }
+
+            clearShooterInput(team) {
+                const input = document.getElementById(`${team}ShooterNumber`);
+                if (input) input.value = '';
+            }
+
+            generateReport() {
+                this.matchData.endTime = new Date();
+                const report = this.createReport();
+                
+                this.showReportSummary(report);
+                this.downloadReport(report);
+            }
+
+            createReport() {
+                const localStats = this.shotsData.local;
+                const visitorStats = this.shotsData.visitor;
+                
+                return {
+                    matchInfo: this.matchData,
+                    statistics: {
+                        local: {
+                            ...localStats,
+                            effectiveness: this.calculateEffectiveness('local'),
+                            totalShots: localStats.goals + localStats.saves + localStats.misses
+                        },
+                        visitor: {
+                            ...visitorStats,
+                            effectiveness: this.calculateEffectiveness('visitor'),
+                            totalShots: visitorStats.goals + visitorStats.saves + visitorStats.misses
+                        }
+                    },
+                    duration: this.getMatchDuration(),
+                    exportDate: new Date().toISOString()
+                };
+            }
+
+            showReportSummary(report) {
+                const summary = `
+INFORME DE PORTERÍAS - HOCKEY PATINES
+Fecha: ${new Date().toLocaleDateString()}
+Duración: ${report.duration}
+
+${this.matchData.teams.local.name.toUpperCase()}:
+• Goles recibidos: ${report.statistics.local.goals}
+• Paradas: ${report.statistics.local.saves}
+• Disparos fuera: ${report.statistics.local.misses}
+• Total disparos: ${report.statistics.local.totalShots}
+• Efectividad: ${report.statistics.local.effectiveness}%
+
+${this.matchData.teams.visitor.name.toUpperCase()}:
+• Goles recibidos: ${report.statistics.visitor.goals}
+• Paradas: ${report.statistics.visitor.saves}
+• Disparos fuera: ${report.statistics.visitor.misses}
+• Total disparos: ${report.statistics.visitor.totalShots}
+• Efectividad: ${report.statistics.visitor.effectiveness}%
+                `;
+                
+                alert(summary);
+            }
+
+            downloadReport(report) {
+                const dataStr = JSON.stringify(report, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = `reporte-porterias-${new Date().toISOString().split('T')[0]}.json`;
+                link.click();
+            }
+
+            resetMatch() {
+                if (confirm('¿Reiniciar partido? Se perderán todas las estadísticas.')) {
+                    this.shotsData = {
+                        local: { goals: 0, saves: 0, misses: 0, shots: [] },
+                        visitor: { goals: 0, saves: 0, misses: 0, shots: [] }
+                    };
+                    
+                    this.clearVisualShots();
+                    this.resetStatsDisplay();
+                    this.clearRecentShots();
+                    this.matchData.startTime = new Date();
+                    
+                    this.showNotification('Partido reiniciado', 'success');
+                }
+            }
+
+            clearShots() {
+                if (confirm('¿Limpiar marcadores? Las estadísticas se mantienen.')) {
+                    this.clearVisualShots();
+                    this.showNotification('Marcadores limpiados', 'info');
+                }
+            }
+
+            clearVisualShots() {
+                document.querySelectorAll('.shot-marker').forEach(marker => marker.remove());
+            }
+
+            resetStatsDisplay() {
+                ['local', 'visitor'].forEach(team => {
+                    document.getElementById(`${team}GoalsAgainst`).textContent = '0';
+                    document.getElementById(`${team}Saves`).textContent = '0';
+                    document.getElementById(`${team}Misses`).textContent = '0';
+                    document.getElementById(`${team}Effectiveness`).textContent = '0%';
+                });
+            }
+
+            clearRecent
+            
