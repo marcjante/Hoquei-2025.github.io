@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Porterías - Hockey Patines</title>
+    <meta name="description" content="Sistema profesional de seguimiento de porterías para hockey patines">
+    <style>
+        /* Porterías Hockey Patines - CSS Completo (extraído del archivo original) */
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #dc2626;
+            --accent: #059669;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --goal-blue: #3b82f6;
+            --goal-red: #ef4444;
+            --goal-yellow: #f59e0b;
+            --border-radius: 15px;
+            --shadow: 0 20px 40px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; display:flex; justify-content:center; align-items:center; color:var(--dark); }
+        .container { background:white; border-radius:var(--border-radius); box-shadow:var(--shadow); overflow:hidden; max-width:1200px; width:100%; margin:0 auto; }
+        header { background:var(--primary); color:white; padding:2rem; text-align:center; position:relative; }
+        .university-badge{ position:absolute; top:10px; left:20px; font-size:0.9rem; opacity:0.8; font-weight:500 }
+        h1{ font-size:2.5rem; margin-bottom:0.5rem; font-weight:700 }
+        .subtitle{ font-size:1.2rem; opacity:0.9 }
+        .match-info{ display:flex; justify-content:center; gap:2rem; margin-top:1rem }
+        .match-timer{ background: rgba(255,255,255,0.2); padding:0.5rem 1rem; border-radius:20px; font-weight:bold }
+        .goals-section{ display:grid; grid-template-columns:1fr 1fr; gap:3rem; padding:2rem }
+        @media (max-width:768px){ .goals-section{ grid-template-columns:1fr; padding:1rem } }
+        .goal-container{ text-align:center; padding:1.5rem; background:var(--light); border-radius:10px; border:3px solid #e2e8f0 }
+        .goal-title{ font-size:1.5rem; font-weight:bold; margin-bottom:1.5rem; color:var(--primary); padding:0.5rem; background:white; border-radius:8px; border:2px solid var(--primary); text-transform:uppercase }
+        .goal-frame{ width:300px; height:180px; border:6px solid #000; position:relative; margin:0 auto; background:linear-gradient(135deg, #4b5563, #6b7280); cursor:crosshair; border-radius:5px; box-shadow:0 8px 16px rgba(0,0,0,0.3) }
+        .goal-grid{ position:absolute; inset:0; display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); gap:2px }
+        .goal-cell{ border:2px solid rgba(255,255,255,0.4); position:relative }
+        .shot-marker{ position:absolute; width:24px; height:24px; border-radius:50%; transform:translate(-50%,-50%); border:3px solid white; box-shadow:0 2px 8px rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:0.8rem; z-index:10; cursor:pointer }
+        .shot-marker.goal{ background:var(--goal-blue) }
+        .shot-marker.save{ background:var(--goal-red) }
+        .shot-marker.miss{ background:var(--goal-yellow); color:#111 }
+        .shot-controls{ display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin:1.5rem 0 }
+        .shot-type-btn{ padding:1rem; border:none; border-radius:8px; cursor:pointer; font-weight:bold; font-size:1rem }
+        .shot-type-btn.goal{ background:var(--goal-blue); color:white }
+        .shot-type-btn.save{ background:var(--goal-red); color:white }
+        .shot-type-btn.miss{ background:var(--goal-yellow); color:black }
+        .shot-type-btn.active{ outline:3px solid rgba(0,0,0,0.08) }
+        .player-input input{ width:100%; padding:1rem; border:2px solid #cbd5e1; border-radius:8px; font-size:1.1rem; text-align:center }
+        .goal-stats{ margin-top:1.5rem; padding:1.5rem; background:white; border-radius:10px; border:2px solid #e2e8f0 }
+        .stats-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:1rem }
+        .stat-card{ background:var(--light); padding:1rem; border-radius:8px; text-align:center }
+        .stat-value{ font-size:2rem; font-weight:bold; color:var(--primary) }
+        .recent-shots{ margin-top:1rem; max-height:120px; overflow-y:auto; background:white; border-radius:8px; padding:0.5rem; border:2px solid #e2e8f0 }
+        .shot-item{ display:flex; justify-content:space-between; padding:0.5rem; border-bottom:1px solid #e2e8f0; font-size:0.9rem }
+        .actions{ display:flex; gap:1rem; margin-top:2rem; padding:0 2rem 2rem; flex-wrap:wrap }
+        .btn{ padding:1rem 2rem; border:none; border-radius:8px; font-size:1.1rem; cursor:pointer; font-weight:bold }
+        .btn-primary{ background:var(--primary); color:white }
+        .btn-success{ background:var(--accent); color:white }
+        .btn-danger{ background:var(--goal-red); color:white }
+        footer{ background:var(--dark); color:white; text-align:center; padding:1.5rem; margin-top:1rem }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="university-badge">UNIVERSITY OF L.C.</div>
+            <h1>Sistema de Porterías - Hockey Patines</h1>
+            <p class="subtitle">Seguimiento profesional de disparos y estadísticas de porteros</p>
+            <div class="match-info">
+                <div class="match-timer">Tiempo: <span id="matchTimer">00:00:00</span></div>
+                <div class="match-date" id="matchDate"></div>
+            </div>
+        </header>
+
+        <div class="instructions">
+            <h3>Instrucciones de Uso</h3>
+            <ul>
+                <li>Selecciona el tipo de disparo (Gol/Parada/Fuera)</li>
+                <li>Introduce el número del jugador que dispara</li>
+                <li>Haz clic en la portería donde fue el disparo</li>
+                <li>Haz clic derecho en cualquier marcador para eliminarlo</li>
+                <li>Las estadísticas se actualizan automáticamente</li>
+            </ul>
+        </div>
+
+        <div class="goals-section">
+            <!-- Portería Local -->
+            <div class="goal-container">
+                <div class="goal-title" id="localGoalTitle">Portería Local</div>
+                
+                <div class="goal-frame" id="localGoal">
+                    <div class="goal-grid">
+                        <div class="goal-cell" data-zone="1"></div>
+                        <div class="goal-cell" data-zone="2"></div>
+                        <div class="goal-cell" data-zone="3"></div>
+                        <div class="goal-cell" data-zone="4"></div>
+                        <div class="goal-cell" data-zone="5"></div>
+                        <div class="goal-cell" data-zone="6"></div>
+                        <div class="goal-cell" data-zone="7"></div>
+                        <div class="goal-cell" data-zone="8"></div>
+                        <div class="goal-cell" data-zone="9"></div>
+                    </div>
+                </div>
+
+                <div class="shot-controls">
+                    <button class="shot-type-btn goal active" onclick="setShotType('goal')">Gol<br>Azul</button>
+                    <button class="shot-type-btn save" onclick="setShotType('save')">Parada<br>Rojo</button>
+                    <button class="shot-type-btn miss" onclick="setShotType('miss')">Fuera<br>Amarillo</button>
+                </div>
+
+                <div class="player-input">
+                    <input type="number" id="localShooterNumber" min="1" max="99" placeholder="Nº Jugador que dispara" onkeypress="handleEnterKey(event, 'localShooterNumber')">
+                </div>
+
+                <div class="goal-stats">
+                    <h3>Estadísticas del Portero</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="localGoalsAgainst">0</div>
+                            <div class="stat-label">Goles Recibidos</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="localSaves">0</div>
+                            <div class="stat-label">Paradas</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="localMisses">0</div>
+                            <div class="stat-label">Disparos Fuera</div>
+                        </div>
+                        <div class="stat-card effectiveness">
+                            <div class="stat-value" id="localEffectiveness">0%</div>
+                            <div class="stat-label">Efectividad</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-shots" id="localRecentShots">
+                    <div class="shot-item">
+                        <span>Haz clic en la portería para registrar disparos</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portería Visitante -->
+            <div class="goal-container">
+                <div class="goal-title" id="visitorGoalTitle">Portería Visitante</div>
+                
+                <div class="goal-frame" id="visitorGoal">
+                    <div class="goal-grid">
+                        <div class="goal-cell" data-zone="1"></div>
+                        <div class="goal-cell" data-zone="2"></div>
+                        <div class="goal-cell" data-zone="3"></div>
+                        <div class="goal-cell" data-zone="4"></div>
+                        <div class="goal-cell" data-zone="5"></div>
+                        <div class="goal-cell" data-zone="6"></div>
+                        <div class="goal-cell" data-zone="7"></div>
+                        <div class="goal-cell" data-zone="8"></div>
+                        <div class="goal-cell" data-zone="9"></div>
+                    </div>
+                </div>
+
+                <div class="shot-controls">
+                    <button class="shot-type-btn goal active" onclick="setShotType('goal')">Gol<br>Azul</button>
+                    <button class="shot-type-btn save" onclick="setShotType('save')">Parada<br>Rojo</button>
+                    <button class="shot-type-btn miss" onclick="setShotType('miss')">Fuera<br>Amarillo</button>
+                </div>
+
+                <div class="player-input">
+                    <input type="number" id="visitorShooterNumber" min="1" max="99" placeholder="Nº Jugador que dispara" onkeypress="handleEnterKey(event, 'visitorShooterNumber')">
+                </div>
+
+                <div class="goal-stats">
+                    <h3>Estadísticas del Portero</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="visitorGoalsAgainst">0</div>
+                            <div class="stat-label">Goles Recibidos</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="visitorSaves">0</div>
+                            <div class="stat-label">Paradas</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="visitorMisses">0</div>
+                            <div class="stat-label">Disparos Fuera</div>
+                        </div>
+                        <div class="stat-card effectiveness">
+                            <div class="stat-value" id="visitorEffectiveness">0%</div>
+                            <div class="stat-label">Efectividad</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-shots" id="visitorRecentShots">
+                    <div class="shot-item">
+                        <span>Haz clic en la portería para registrar disparos</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary" onclick="generateReport()">Generar Informe</button>
+            <button class="btn btn-success" onclick="resetMatch()">Nuevo Partido</button>
+            <button class="btn btn-danger" onclick="clearShots()">Limpiar Disparos</button>
+            <button class="btn btn-primary" onclick="exportData()">Exportar Datos</button>
+        </div>
+
+        <footer>
+            <p>Sistema de Porterías - Hockey Patines - UNIVERSITY OF L.C. &copy; 2023</p>
+        </footer>
+    </div>
+
+    <script>
+        // Minimal working HockeyGoalTracker based on extracted JS (repaired)
+        class HockeyGoalTracker {
+            constructor() {
+                this.currentShotType = 'goal';
+                this.shotsData = { local: { goals:0, saves:0, misses:0, shots:[] }, visitor: { goals:0, saves:0, misses:0, shots:[] } };
+                this.matchData = { startTime: null, endTime: null, teams: { local: { name: 'Equipo Local' }, visitor: { name: 'Equipo Visitante' } } };
+                this.init();
+            }
+
+            init() {
+                this.matchData.startTime = new Date();
+                this.initializeGoals();
+                this.updateMatchTimer();
+                this.updateMatchDate();
+            }
+
+            initializeGoals() {
+                ['localGoal','visitorGoal'].forEach(goalId => {
+                    const el = document.getElementById(goalId);
+                    if (!el) return;
+                    el.addEventListener('click', (e) => this.handleGoalClick(goalId, e));
+                    el.addEventListener('contextmenu', (e) => e.preventDefault());
+                });
+            }
+
+            handleGoalClick(goalId, e) {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = Math.round(e.clientX - rect.left);
+                const y = Math.round(e.clientY - rect.top);
+                const team = goalId.includes('local') ? 'local' : 'visitor';
+                const shooter = this.getShooterNumber(team);
+                if (!shooter || shooter === '?') { this.showNotification('Introduce el número del jugador', 'warning'); return; }
+                this.registerShot(team, x, y, this.currentShotType, shooter);
+            }
+
+            setShotType(type) { this.currentShotType = type; document.querySelectorAll('.shot-type-btn').forEach(b=>b.classList.remove('active')); const el = document.querySelector(`.shot-type-btn.${type}`); if (el) el.classList.add('active'); this.showNotification(`Tipo de disparo: ${type}`, 'info'); }
+            getShooterNumber(team){ const input = document.getElementById(`${team}ShooterNumber`); return input?.value || '?'; }
+
+            registerShot(team,x,y,type,shooter){
+                const goalEl = document.getElementById(`${team}Goal`);
+                const marker = document.createElement('div');
+                marker.className = `shot-marker ${type}`;
+                marker.style.left = x + 'px'; marker.style.top = y + 'px'; marker.textContent = shooter;
+                marker.title = `Jugador ${shooter} - ${type}`;
+                marker.addEventListener('contextmenu', (ev)=>{ ev.preventDefault(); if (confirm(`Eliminar disparo de ${shooter}?`)){ marker.remove(); this.revertShotStats(team,type); } });
+                goalEl.appendChild(marker);
+
+                // update stats
+                this.updateShotStats(team,type);
+                const shotData = { id: Date.now(), x,y,type,shooter, timestamp: new Date().toISOString(), team };
+                this.shotsData[team].shots.push(shotData);
+                this.updateRecentShots(team, shotData);
+                this.clearShooterInput(team);
+                this.showNotification(`${this.matchData.teams[team].name}: ${type} - Jugador ${shooter}`, 'success');
+            }
+
+            updateShotStats(team,type){ switch(type){ case 'goal': this.shotsData[team].goals++; break; case 'save': this.shotsData[team].saves++; break; case 'miss': this.shotsData[team].misses++; break; } this.updateStatsDisplay(team); }
+            revertShotStats(team,type){ switch(type){ case 'goal': this.shotsData[team].goals = Math.max(0,this.shotsData[team].goals-1); break; case 'save': this.shotsData[team].saves = Math.max(0,this.shotsData[team].saves-1); break; case 'miss': this.shotsData[team].misses = Math.max(0,this.shotsData[team].misses-1); break; } this.updateStatsDisplay(team); }
+
+            updateStatsDisplay(team){ const s = this.shotsData[team]; document.getElementById(`${team}GoalsAgainst`).textContent = s.goals; document.getElementById(`${team}Saves`).textContent = s.saves; document.getElementById(`${team}Misses`).textContent = s.misses; const eff = this.calculateEffectiveness(team); document.getElementById(`${team}Effectiveness`).textContent = eff + '%'; }
+            calculateEffectiveness(team){ const d = this.shotsData[team]; const total = d.goals + d.saves + d.misses; return total>0? Math.round((d.saves/total)*100):0; }
+
+            updateRecentShots(team,shot){ const container = document.getElementById(`${team}RecentShots`); const div = document.createElement('div'); div.className='shot-item'; div.textContent = `${new Date(shot.timestamp).toLocaleTimeString()} - Jug ${shot.shooter} - ${shot.type}`; container.insertBefore(div, container.firstChild); while(container.children.length>5) container.removeChild(container.lastChild); }
+            clearShooterInput(team){ const i = document.getElementById(`${team}ShooterNumber`); if(i) i.value=''; }
+
+            updateMatchTimer(){ const el = document.getElementById('matchTimer'); const start = this.matchData.startTime; setInterval(()=>{ const diff = Date.now()-start.getTime(); const hrs = String(Math.floor(diff/3600000)).padStart(2,'0'); const mins = String(Math.floor(diff%3600000/60000)).padStart(2,'0'); const secs = String(Math.floor(diff%60000/1000)).padStart(2,'0'); el.textContent = `${hrs}:${mins}:${secs}`; }, 1000); }
+            updateMatchDate(){ document.getElementById('matchDate').textContent = new Date().toLocaleDateString(); }
+
+            showNotification(msg,type){ console.log(`[${type}] ${msg}`); }
+
+            generateReport(){ this.matchData.endTime=new Date(); const report={ match:this.matchData, shots:this.shotsData }; alert('Informe generado en consola'); console.log(report); }
+            resetMatch(){ if(confirm('Reiniciar partido?')){ this.shotsData = { local:{goals:0,saves:0,misses:0,shots:[]}, visitor:{goals:0,saves:0,misses:0,shots:[]} }; this.clearVisualShots(); this.updateStatsDisplay('local'); this.updateStatsDisplay('visitor'); } }
+            clearShots(){ if(confirm('Limpiar marcadores?')){ this.clearVisualShots(); this.showNotification('Marcadores limpiados','info'); } }
+            clearVisualShots(){ document.querySelectorAll('.shot-marker').forEach(m=>m.remove()); }
+            exportData(){ const dataStr = JSON.stringify({ match:this.matchData, shots:this.shotsData }, null, 2); const blob = new Blob([dataStr], { type:'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'porterias.json'; a.click(); }
+        }
+
+        // create singleton and expose globals used by inline handlers
+        const tracker = new HockeyGoalTracker();
+        window.setShotType = (t) => tracker.setShotType(t);
+        window.handleEnterKey = (e, id) => { if(e.key === 'Enter'){ const el = document.getElementById(id); if(el) el.blur(); } };
+        window.generateReport = () => tracker.generateReport();
+        window.resetMatch = () => tracker.resetMatch();
+        window.clearShots = () => tracker.clearShots();
+        window.exportData = () => tracker.exportData();
+
+    </script>
+</body>
+</html>
